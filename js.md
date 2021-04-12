@@ -151,3 +151,87 @@ mergeSortFlatten (arr1, arr2);
 ```
 </details>
 <br><br>
+
+
+3. 多种方式实现斐波那契数列？[链接](https://github.com/lgwebdream/FE-Interview/issues/9)
+
+<details>
+<summary>答案</summary>
+
+实现一
+
+```js
+function fib (n) {
+    if (n < 0) throw new Error('输入的数字不能小于0');
+    if (n === 2) {
+        return 1;
+    }
+    if (n === 1) {
+        return 0;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+```
+
+实现二
+
+```js
+function fib (n) {
+    if (n < 0) throw new Error('输入的数字不能小于0');
+    if (n === 2) {
+        return 1;
+    }
+    if (n === 1) {
+        return 0;
+    }
+    function _fib (n, a, b) {
+        if (n === 1) return a;
+        return _fib(n - 1, b, a + b);
+    }
+    return _fib(n, 0, 1);
+}
+
+```
+
+实现三
+
+```js
+function fibonacci (n) {
+    if (n === 2) {
+        return 1;
+    }
+    if (n === 1) {
+        return 0;
+    }
+    const r = [0, 1]
+    let i = n - 2;
+    while (i--) {
+        r.push(r[r.length - 1] + r[r.length - 2]);
+    }
+    return r[n - 1];
+}
+fibonacci(10)
+// 34
+```
+
+实现四
+
+```js
+function* fib () {
+    let [prev, curr] = [0, 1];
+    yield prev;
+    for (;;) {
+        yield curr;
+        [prev, curr] = [curr, prev + curr];
+    }
+}
+
+for (let n of fib()) {
+    if (n > 1000) break;
+    console.log(n);
+}
+// 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+```
+
+</details>
+<br><br>
