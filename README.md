@@ -239,3 +239,109 @@ for (let n of fib()) {
 
 </details>
 <br><br>
+
+4. 字符串中出现的不重复最长长度？[链接](https://github.com/lgwebdream/FE-Interview/issues/10)
+
+<details>
+<summary>答案</summary>
+
+实现一
+
+```js
+//循环字符串，没有重复的就存下每次的字符的位置和字符自身，按顺序排列，有重复的就重置循环变量从索引低的重复字符处后一位重新开始循环，缺点，循环次数过多
+
+function lengthOfLongestSubstring (str) {
+    if (str.length <= 1) {
+        return str.length;
+    }
+    let t = [];
+    let i = 0
+    while (i < str.length) {
+        let has = t.findIndex(item => item.char === str[i]);
+        if (has >= 0) {
+            i = t[has].pos;
+            t = [];
+        } else {
+            t.push({
+                char: str[i],
+                pos: i
+            });
+        }
+        i++;
+    }
+    
+    return t.length;
+}
+
+// 优化一下
+function lengthOfLongestSubstring (str) {
+    let t = {};
+    let res = 0;
+    let j = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        if (t[str[i]]) {
+            j = t[str[i]];
+        }
+        res = i - j;
+        t[str[i]] = i;
+    }
+    return res;
+}
+```
+
+实现二
+
+```js
+//把字符串变成字符数组，reduce遍历数组，累计值就是最新的最长无重复字符的子字符串
+
+function lengthOfLongestSubstring (s) {
+    const arr = [...s]
+    let res = 1;
+    let result = arr.reduce((total, cur, i, arr) => {
+        if (i == 0) {
+            return cur;
+        } else {
+            if (total.indexOf(cur) < 0) {
+                return total + cur
+            } else if (res < total.length) {
+                res = total.length
+                return total.slice(total.indexOf(cur) + 1, total.length) + cur
+            } else {
+                return total.slice(total.indexOf(cur) + 1, total.length) + cur
+            }
+        }
+    }, "")
+    if (res < result.length) {
+        res = result.length
+    }
+
+    return res
+}
+```
+
+实现三
+
+```js
+// map 存下不重复字符的位置，i是不重复子串的起始位置，如果有重复字符就重置i，j - i 是不重复子串的长度
+
+function lengthOfLongestSubstring (s) {
+    let map = new Map();
+    let i = -1
+    let res = 0
+    for (let j = 0; j < s.length; j++) {
+        if (map.has(s[j])) {
+            i = Math.max(i, map.get(s[j]))
+        }
+        res = Math.max(res, j - i)
+        map.set(s[j], j)
+    }
+    return res
+}
+
+console.log(lengthOfLongestSubstring("loddktdji"))
+console.log(lengthOfLongestSubstring("dvdf"))
+console.log(lengthOfLongestSubstring("adfafwefffdasdcx"))
+```
+</details>
+<br><br>
