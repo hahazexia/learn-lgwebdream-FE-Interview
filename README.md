@@ -477,4 +477,11 @@ useLayoutEffect DOM改变后同步触发。使用它来从DOM读取布局并同�
 </details>
 <br><br>
 
-8. 
+8. 说一下 Http 缓存策略，有什么区别，分别解决了什么问题？[链接](https://github.com/lgwebdream/FE-Interview/issues/14)
+
+<details>
+<summary>答案</summary>
+
+
+</details>
+<br><br>
