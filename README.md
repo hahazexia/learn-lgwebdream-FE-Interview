@@ -423,3 +423,58 @@ Chrome Beta 以 Dev 为基础，每月更新一次。它是正式发布前的最
 
 </details>
 <br><br>
+
+7. react 最新版本解决了什么问题？加了哪些东西？[链接](https://github.com/lgwebdream/FE-Interview/issues/13)
+
+<details>
+<summary>答案</summary>
+
+1. React 16.x的三大新特性 Time Slicing, Suspense，hooks
+
+* Time Slicing（解决CPU速度问题）使得在执行任务的期间可以随时暂停，跑去干别的事情，这个特性使得react能在性能极其差的机器跑时，仍然保持有良好的性能
+* Suspense （解决网络IO问题）和lazy配合，实现异步加载组件。 能暂停当前组件的渲染, 当完成某件事以后再继续渲染，解决从react出生到现在都存在的「异步副作用」的问题，而且解决得非常的优雅，使用的是「异步但是同步的写法」，我个人认为，这是最好的解决异步问题的方式
+*  此外，还提供了一个内置函数 componentDidCatch，当有错误发生时, 我们可以友好地展示 fallback 组件；可以捕捉到它的子元素（包括嵌套子元素）抛出的异常；可以复用错误组件。
+
+2. React16.8
+
+* 加入hooks，让React函数式组件更加灵活
+
+hooks之前，React存在很多问题
+
+在组件间复用状态逻辑很难<br>
+复杂组件变得难以理解，高阶组件和函数组件的嵌套过深。<br>
+class组件的this指向问题<br>
+难以记忆的生命周期<br>
+
+* hooks很好的解决了上述问题，hooks提供了很多方法
+
+useState 返回有状态值，以及更新这个状态值的函数<br>
+useEffect 接受包含命令式，可能有副作用代码的函数。<br>
+useContext 接受上下文对象（从React.createContext返回的值）并返回当前上下文值，<br>
+useReducer useState的替代方案。接受类型为(state，action) => newState的reducer，并返回与dispatch方法配对的当前状态。<br>
+useCallback 返回一个回忆的memoized版本，该版本仅在其中一个输入发生更改时才会更改。纯函数的输入输出确定性<br>
+useMemo 纯的一个记忆函数<br>
+useRef 返回一个可变的ref对象，其.current属性被初始化为传递的参数，返回的 ref 对象在组件的整个生命周期内保持不变。<br>
+useImperativeMethods 自定义使用ref时公开给父组件的实例值<br>
+useMutationEffect 更新兄弟组件之前，它在React执行其DOM改变的同一阶段同步触发<br>
+useLayoutEffect DOM改变后同步触发。使用它来从DOM读取布局并同步重新渲染<br>
+
+3. React16.9
+
+* 重命名 Unsafe 的生命周期方法。新的 UNSAFE_ 前缀将有助于在代码 review 和 debug 期间，使这些有问题的字样更突出
+* 废弃 javascript: 形式的 URL。以 javascript: 开头的 URL 非常容易遭受攻击，造成安全漏洞。
+* 废弃 “Factory” 组件。 工厂组件会导致 React 变大且变慢。
+* act() 也支持异步函数，并且你可以在调用它时使用 await。
+* 使用 `<React.Profiler>` 进行性能评估。 在较大的应用中追踪性能回归可能会很方便
+
+4. React16.13.0
+
+* 支持在渲染期间调用setState，但仅适用于同一组件
+* 可检测冲突的样式规则并记录警告
+* 废弃unstable_createPortal，使用createPortal
+* 将组件堆栈添加到其开发警告中，使开发人员能够隔离bug并调试其程序，这可以清楚地说明问题所在，并更快地定位和修复错误。
+
+</details>
+<br><br>
+
+8. 
