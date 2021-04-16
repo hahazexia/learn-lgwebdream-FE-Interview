@@ -256,3 +256,12 @@ view——>dispatch——>actions——>reducer——>state变化——>view变�
 
 </details>
 <br><br>
+
+6. 说一下 Vue3 与 Vue2 的对比 [链接](https://github.com/lgwebdream/FE-Interview/issues/957)
+
+<details>
+<summary>答案</summary>
+
+
+</details>
+<br><br>
