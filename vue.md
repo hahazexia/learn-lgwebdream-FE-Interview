@@ -240,3 +240,19 @@ view——>dispatch——>actions——>reducer——>state变化——>view变�
     2. 正如它能保证性能下限，在真实 dom 操作的时候进行针对性的优化时，还是很快的
 </details>
 <br><br>
+
+5. 介绍单页应用和多页应用？[链接](https://github.com/lgwebdream/FE-Interview/issues/593)
+
+<details>
+<summary>答案</summary>
+
+* 多页应用，每次页面跳转，都会请求后台返回新的页面，这就是多页应用。
+    * 路由由后端控制。
+    * 优点：首屏时间快，SEO 效果好。缺点：页面跳转加载慢，会白屏
+
+* 单页应用，跳转页面的时候不会再请求新的页面，只有一个页面文件，依靠 js 改变页面的内容。
+    * 路由由前端控制。
+    * 优点：切换页面加载快，不会白屏。缺点：首屏加载慢，SEO 不友好。
+
+</details>
+<br><br>
