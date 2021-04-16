@@ -163,3 +163,43 @@ view——>dispatch——>actions——>reducer——>state变化——>view变�
 
 </details>
 <br><br>
+
+3. 说一下对 React 和 Vue 的理解，它们的异同 [链接](https://github.com/lgwebdream/FE-Interview/issues/347)
+
+<details>
+<summary>答案</summary>
+
+1. 相似之处
+
+* 都将注意力集中保持在核心库，而将其他功能如路由和全局状态管理交给相关的库
+* 都有自己的构建工具，能让你得到一个根据最佳实践设置的项目模板
+* 都使用了 virtual DOM 提高重绘性能
+* 都有 props 的概念，允许组件间的数据传递
+* 都鼓励组件化应用，将应用拆成一个个功能明确的模块，提高复用性
+
+2. 不同之处
+    1. 数据流
+        * vue默认支持数据双向绑定，而 react 一直提倡单向数据流
+    2. 虚拟DOM
+        * vue 2.x 开始引入 virtual DOM，消除了和 react 在这方面的差异，但是在具体细节还是有各自的特点
+        * vue 宣称可以更快地计算出 virtual DOM 的差异，这是由于它在渲染过程中，会跟踪每一个组件的依赖关系，不需要重新渲染整个组件树
+        * 对于 react 而言，每当应用的状态被改变时，全部子组件都会重新渲染。当然，这可以通过 PureComponent/shouldComponentUpdate 这个生命周期方法来进行控制，但 vue 将此视为默认的优化。
+    3. 组件化
+        * react 和 vue 最大的不同是模板的编写。
+        * vue 鼓励你去写近似常规 html 的模板。写起来很接近标准 html 元素，只是多了一些属性。react 推荐所有的模板通过 javascript 语法扩展 JSX 书写。
+        * 具体来讲：react 中 render 函数是支持闭包特性的，所以 import 的组件在 render 中可以直接调用。但在 vue 中，由于模板中使用数据必须挂在 this 上进行一次中转，所以我们 import 一个组件用完了之后，还需要在 components 中再声明一下。
+    4. 监听数据变化的实现原理不同
+        * vue 通过 getter/setter 以及一些函数的劫持，能精确知道数据变化，不需要特别的优化就能达到很好的性能
+        * react 默认是通过比较引用的方式进行的，如果不优化（PureComponent/shouldComponentUpdate）可能导致大量不必要的 virtual DOM 重新渲染。这是因为 vue 使用的是可变数据，而 react 更强调数据的不可变。
+    5. 高阶组件
+        * react 可以通过高阶组件（High Order Components HOC）来扩展，而 vue 需要通过 mixins 来扩展
+        * 原因：高阶组件就是高阶函数，而 react 的组件本身就是纯粹的函数，所以高阶函数对 react 来说易如反掌。相反 vue 使用 html 模板创建视图组件，这使模板无法有效的编译，因此 vue 不采用 HOC 来实现。
+    6. 构建工具
+        * react create-react-app
+        * vue vue-cli
+    7. 跨平台
+        * react react-native
+        * vue weex
+</details>
+<br><br>
+
