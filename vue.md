@@ -203,3 +203,40 @@ view——>dispatch——>actions——>reducer——>state变化——>view变�
 </details>
 <br><br>
 
+4. 对虚拟 DOM 的理解？虚拟 DOM 主要做了什么？虚拟 DOM 本身是什么？[链接](https://github.com/lgwebdream/FE-Interview/issues/479)
+
+<details>
+<summary>答案</summary>
+
+1. 什么是 virtual DOM 
+
+* 从本质上讲，virtual dom 是一个 javascript 对象，通过对象的方式来表示 dom 结构。将页面的状态抽象为 js 对象的形式，配合不同的渲染工具，使跨平台渲染成为可能。通过事务处理机制，将多次 dom 修改的结果一次性更新到页面上，**从而有效减少页面渲染次数，减少修改 dom 的重绘重排次数，提高渲染性能**。
+
+虚拟 dom 是对 dom 的抽象，这个对象是更加轻量级的对 dom 的描述。它设计的最初目的，就是更好的跨平台，比如 nodejs 就没有 dom，如果想实现 ssr，那么一个方式就是借助虚拟 dom，因为虚拟 dom 本身是 js 对象。在代码渲染到页面之前，vue 或者 react 会把代码转换成一个对象（virtual dom）。以对象的形式来描述真实 dom 结构，最终渲染到页面。在每次数据发生变化前，虚拟 dom 都会缓存一份，变化之时，现在的虚拟 dom 会与缓存的虚拟 dom 进行比较。
+
+在 vue 或 react 内部封装了 diff 算法，通过这个算法来进行比较，渲染时修改改变的变化，原先没有发生改变的通过原来的数据渲染。
+
+另外现在前端框架的一个基本要求就是无须手动操作 dom，一方面是因为手动操作 dom 无法保证程序性能，多人协作的项目中如果 review 不严格，可能会有开发者写出性能较低的代码，另一方面更重要的是省略手动 dom 操作可以大大提高开发效率。
+
+2. 为什么要用 virtual dom
+    1. 保证性能下限，在不进行手动优化的情况下，提供过得去的性能
+    
+    看一下页面渲染的一个流程：
+    
+    * 解析 html --> 生成 dom --> 生成 cssom --> layout --> paint --> compiler
+
+    下面对比一下修改 dom 时真实 dom 操作和 virtual dom 的过程，来看一下它们重排重绘的性能消耗：
+
+    * 真实 dom: 生成 html 字符串 + 重建所有 dom 元素
+    * virtual dom: 生成 vnode + domdiff + 必要的 dom 更新
+
+    virtual dom 更新 dom 的准备工作耗费更多的时间，也就是 js 层面，相比于更多的 dom 操作它的消费是极其便宜的。尤雨溪在社区论坛中写道：**框架给你的保证是，你不需要手动优化的情况下，我依然可以给你提供过得去的性能**。
+    
+    2. 跨平台
+    virtual dom 本质上是 javascript 对象，它可以很方便的跨平台操作，比如服务端渲染，uniapp 等。
+
+3. virtual dom 真的比真实 dom 性能好吗
+    1. 首次渲染大量 dom 时，由于多了一层虚拟 dom 的计算，会比 innerHTML 插入慢
+    2. 正如它能保证性能下限，在真实 dom 操作的时候进行针对性的优化时，还是很快的
+</details>
+<br><br>
