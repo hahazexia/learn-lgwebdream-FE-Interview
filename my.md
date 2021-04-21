@@ -198,3 +198,12 @@ console.log(bar.call(obj2)) // 2
 * 箭头函数的 this 就是外出代码块的 this，所以就是 foo 的 this，所以是 obj1
 </details>
 <br><br>
+
+8. js 的垃圾回收机制是什么，常用的是哪种？
+
+<details>
+<summary>答案</summary>
+
+
+</details>
+<br><br>
