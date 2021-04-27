@@ -168,8 +168,10 @@ Cache-control: only-if-cached // 表明客户端只接受已缓存的响应，�
 <summary>答案</summary>
 
 1. 区别
+    * HTTPS在浏览器显示绿色安全锁，HTTP没有显示;
+    * HTTPS基于传输层，HTTP基于应用层
     * https 需要申请去 CA 申请证书，需要付费
-    * http 报文信息是明文传输；https 是具有安全性的 ssl/tls 加密传输协议。这样的后果是 http 的内容可能会被窃听。https 内容经过对称加密，每个连接生成一个唯一的加密密钥
+    * http 报文信息是明文传输；https 是具有安全性的 ssl/tls 加密传输协议。这样的后果是 http 的内容可能会被窃听。https 内容经过对称加密，更安全
     * http 无法验证报文的完整性，因此无法知道数据是否被篡改。https 内容传输经过完整性校验。
     * http 协议中的请求和响应不会对通信方进行确认。由于不存在确认通信方的处理步骤，任何人都可以发起请求。另外，服务器只要接收到请求，不管对方是谁都会返回一个响应（但也仅限于发送端的IP地址和端口号没有被Web服务器设定限制访问的前提下）HTTP协议无法验证通信方身份，任何人都可以伪造虚假服务器欺骗用户，实现“钓鱼欺诈”，用户无法察觉。https 第三方无法伪造服务端（客户端）身份。
     * http 和 https 默认使用端口不同，http 80，https 443
@@ -178,6 +180,130 @@ Cache-control: only-if-cached // 表明客户端只接受已缓存的响应，�
     * TLS/SSL 的功能实现主要依赖于三类基本算法：散列函数 、对称加密和非对称加密，其利用非对称加密实现身份认证和密钥协商，对称加密算法采用协商的密钥对数据加密，基于散列函数验证信息的完整性。
     * 解决内容可能被窃听的问题 --> 加密。具体做法是：发送密文的一方使用对方的公钥进行加密处理“对称的密钥”，然后对方用自己的私钥解密拿到“对称的密钥”，这样可以确保交换的密钥是安全的前提下，使用对称加密方式进行通信。所以，HTTPS采用对称加密和非对称加密两者并用的混合加密机制。
     * 解决报文可能遭篡改问题 --> 数字签名。发送者将一段文本先用Hash函数生成消息摘要，然后用发送者的私钥加密生成数字签名，与原文文一起传送给接收者。接下来就是接收者校验数字签名的流程了。接收者只有用发送者的公钥才能解密被加密的摘要信息，然后用HASH函数对收到的原文产生一个摘要信息，与上一步得到的摘要信息对比。如果相同，则说明收到的信息是完整的，在传输过程中没有被修改，否则说明信息被修改过，因此数字签名能够验证信息的完整性。
+    * 下面是 https 的完整流程：
+        1. 1.Client发起一个HTTPS（比如https://juejin.im/user/5a9a9cdcf265da238b7d771c）的请求，根据RFC2818的规定，Client知道需要连接Server的443（默认）端口。
+        2. Server把事先配置好的公钥证书（public key certificate）返回给客户端。
+        3. Client验证公钥证书：比如是否在有效期内，证书的用途是不是匹配Client请求的站点，是不是在CRL吊销列表里面，它的上一级证书是否有效，这是一个递归的过程，直到验证到根证书（操作系统内置的Root证书或者Client内置的Root证书）。如果验证通过则继续，不通过则显示警告信息。
+        4. Client使用伪随机数生成器生成加密所使用的对称密钥，然后用证书的公钥加密这个对称密钥，发给Server。
+        5. Server使用自己的私钥（private key）解密这个消息，得到对称密钥。至此，Client和Server双方都持有了相同的对称密钥。
+        6. Server使用对称密钥加密“明文内容A”，发送给Client。
+        7. Client使用对称密钥解密响应的密文，得到“明文内容A”。
+        8. Client再次发起HTTPS的请求，使用对称密钥加密请求的“明文内容B”，然后Server使用对称密钥解密密文，得到“明文内容B”。
+3. 为什么并不是所有网站都采用 https？
+    * https 需要选择、购买、部署证书，耗时费力。
+    * https 性能消耗大。与纯文本通信相比，加密通信会消耗更多的CPU及内存资源。但事实并非如此，用户可以通过性能优化、把证书部署在SLB或CDN，来解决此问题。因此HTTPS经过优化之后其实并不慢
+    * 想要节约购买证书的开销也是原因之一
+4. 怎么配置？
+    1. Tomcat
+        * 申请证书。证书由第三方 CA 认证机构颁发，网站所有者向 CA 机构申请证书，证书中包含了公钥、颁证机构、网址、失效日期。如果网站使用假冒证书，浏览器向 CA 认证机构发送证书是否合法的请求，如果检测到是非法的，浏览器直接断开请求。
+        * 证书部署到 tomcat。配置 SSL 连接器，将 www.domain.com.jks 文件存放到 config 目录下，然后配置同级目录下的 server.xml 文件：
+        ```xml
+            <Connector
+            port="443"
+            protocol="HTTP/1.1"
+            SSLEnabled="true"
+            maxThreads="150"
+            scheme="https"
+            secure="true"
+            keystoreFile="conf/www.domain.com.jks"
+            keystorePass="changeit"
+            clientAuth="false"
+            sslProtocol="TLS"
+            />
+        ```
+        这个是让 http 自动跳转到 https ，安全配置在 conf 目录下的 web.xml。在后面的倒数第二段继续添加：
 
+        ```xml
+            <login-config>
+                <!-- Authorization setting for SSL -->
+                <auth-method>CLIENT-CERT</auth-method>
+                <realm-name>Client Cert Users-only Area</realm-name>
+            <login-config>
+            <security-constraint>
+                <!-- Authorization setting for SSL -->
+                <web-resource-collection>
+                    <web-resource-name>SSL</web-resource-name>
+                    <url-pattern>/*</url-pattern>
+                </web-resource-collection>
+                <user-data-constraint>
+                    <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+                </user-data-constraint>
+            </security-constraint>
+        ```
+        这步是让非 ssl 的 connector 跳转到 ssl 的 connector 去。所以还需要在 server.xml 配置：
+        
+        ```xml
+            <Connector
+            port="8080"
+            protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="443"
+            >
+        ```
+        重启 tomcat，输入 https 网址，测试是否访问成功。
+    2. Nginx
+        * 申请证书
+        * 确保具有 ssl 模块，如果没有就安装
+            1. 安装基础支持包
+            ```shell
+                yum -y install openssl openssl-devel
+            ```
+            2. 备份原 nginx.conf 文件为 nginx.conf.bak 以防万一
+            3. 安装 ssl 模块
+            ```shell
+                cd /home/nginx-1.10.2
+                ../configure --with-http_ssl_module
+                make
+                make install
+            ```
+        * 配置服务器。配置 Nginx.conf，将下载的证书和 key 的所在位置配置到配置文件上。具体如下：
+        ```
+            server {    
+                listen 443; #监听443端口（https默认端口）
+                server_name www.xxx.com; #填写绑定证书的域名
+                ssl on;
+                ssl_certificate xxx.crt; #填写你的证书所在的位置
+                ssl_certificate_key xxx.key; #填写你的key所在的位置
+                ssl_session_timeout 5m;
+                ssl_protocols TLSv1 TLSv1.1 TLSv1.2; #按照这个协议配置
+                ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE; #按照这个套件配置
+                ssl_prefer_server_ciphers on;
+                location / {
+                        root  xxx ; #填写你的你的站点目录
+                        index index.php index.html index.htm;
+                }
+            }
+        ```
+        * 进行 http 80 端口的访问重定向配置
+        ```
+            server {
+                listen 80;
+                server_name  www.xxx.com; #填写绑定证书的域名
+                rewrite ^ https://$http_host$request_uri? permanent; # 将http转到https
+            }
+        ```
+        * 重启服务器。在重启服务器前先检验配置文件是否由错误：
+        ```
+            nginx -t # 如果没有错误就重启服务器
+            service nginx restart
+        ```
+</details>
+<br><br>
+
+5. http 1 和 http 2 有什么区别，和 http 1.1 相比，http 2 都有什么特性？
+
+<details>
+<summary>答案</summary>
+
+* http 1.0 和 http 1.1 的区别
+    * 缓存处理。在 http 1.0 中主要使用 header 里的 if-Modified-Since，Expires 来做为缓存判断的标准，http 1.1 则引入更多的缓存控制策略，例如 ETag，if-Unmodified-Since，if-Match，if-None-Match 等更多可供选择的缓存头来控制缓存策略。
+    * 带宽优化及网络连接的使用。http 1.0 中，存在一些浪费带宽的现象，例如客户端只需要某个对象的一部分，而服务器却将整个对象送过来了，而且不支持断点续传功能，http 1.1 则在请求头引入 range 头域，它允许只请求资源的某个部分，即返回码是 206 (partial content)。
+    * 错误通知的管理。http 1.1 中新增了 24 个错误状态码，如 409 （conflict）表示请求的资源与资源的当前状态发生冲突；410（gone）表示服务器上的某个资源被永久性删除。
+    * host 头处理。http 1.0 中认为每台服务器都绑定一个唯一的 ip 地址，因此，请求消息中的 url 并没有传递主机名（hostname）。但随着虚拟主机技术的发展，每一台物理服务器上可以存在多个虚拟主机（multi-homed web servers），并且他们共享一个 ip 地址。http 1.1 的请求消息和响应消息都应支持 host 头域，且请求消息中如果没有 host 头域会报告一个错误。（400 bad request）举例来说，将三个不同的服务部署在同一个域名下，这样服务器收到客户端请求后需要知道请求对应哪个具体的服务，所以就需要客户端传递 host 头。
+    * 长连接，http 1.1 支持长连接（persistentConnection）和请求的流水线（pipelining）处理，在一个 tcp 连接上可以发送多个 http 请求和响应，减少建立和关闭连接的消耗和延迟，在 http 1.1 中默认开启 Connection: keep-alive，一定程度上弥补了 http 1.0 每次请求都要创建连接的缺点。
+* http 1.x 优化
+    2012 年 google 提出了 SPDY 方案，优化了 http 1.x 的全球延迟，解决了 http 1.x 的安全性
+    * 降低延迟。spdy 采用多路复用（multiplexing）。多路复用通过多个请求 stream 共享一个 tcp 连接的方式，解决了 HOL blocking（队头阻塞 Head-of-Line blocking） 的方式，降低了延迟同时提高了带宽的利用率。
+    * 请求优先级。
 </details>
 <br><br>
