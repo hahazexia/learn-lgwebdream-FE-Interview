@@ -257,11 +257,91 @@ view——>dispatch——>actions——>reducer——>state变化——>view变�
 </details>
 <br><br>
 
-6. 说一下 Vue3 与 Vue2 的对比 [链接](https://github.com/lgwebdream/FE-Interview/issues/957)
+6. vuex 和 localStorage 的区别？
+
+<details>
+<summary>答案</summary>
+
+1. vuex 存储在内存；localStorage 以文件的形式存在本地，localStorage 只能存储字符串类型数据。
+2. 应用场景。
+
+vuex 是一个专为 vue 应用开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。可以用于组件间的传值。
+
+localStorage 是将数据存到浏览器的一种方式，一半跨页面传递数据时使用。
+
+vuex 可以做到数据的响应式，localStorage 不能。
+3. 刷新页面时 vuex 中数据会丢失，localStorage 不会。
+4. localStorage 不能取代 vuex。如果是不变的数据可以使用 localStorage 存储。但是如果两个组件共用一个数据，当一个组件改变了该数据，希望另一个组件响应该变化的时候，localStorage 无法做到。
+</details>
+<br><br>
+
+7. vue 双向绑定原理？
 
 <details>
 <summary>答案</summary>
 
 
+</details>
+<br><br>
+
+8. 说一下路由钩子在 vue 生命周期的体现？
+
+<details>
+<summary>答案</summary>
+
+1. 导航守卫
+    有时候我们需要通过路由进行一些操作，比如最常见的登录权限验证，当用户满足条件才让其进入导航，否则就取消跳转，并跳到登陆页面让其登录。植入路由导航有多种方式：全局的，单个路由独享的，组件级的。
+    * 全局路由钩子
+        * router.beforeEach 全局前置守卫，进入路由之前
+        * router.beforeResolve 全局解析守卫（2.5.0+），在 beforeRouteEnter 调用之后调用
+        * router.afterEach 全局后置钩子，进入路由之后
+    * 单个路由独享钩子
+        * beforeEnter 如果不想全局配置守卫，可以为某些路由单独配置守卫
+        ```js
+            export default [
+                {
+                    path: '/',
+                    name: 'login',
+                    component: login,
+                    beforeEnter: (to, from, next) => {
+                        console.log('即将进入登录页面')
+                        next()
+                    }
+                }
+            ]
+        ```
+        * 组件内钩子 beforeRouteEnter beforeRouteUpdate beforeRouteLeave
+            * beforeRouteEnter 进入组件前触发
+            * beforeRouteUpdate 当前地址改变并且组件被复用时触发，例如带有参数的路径，foo/:id 在 foo/1 和 foo/2 之间跳转的时候，会渲染同样的 foo 组件，钩子会被触发
+            * beforeRouteLeave 离开组件被调用
+            * 注意：beforeRouteEnter 还访问不到 this，因为该守卫执行前，组件实例还没被创建。可以通过传一个回调给 next 来访问组件实例。
+2. vue 路由钩子执行顺序
+    * 完整的路由钩子顺序
+        1. 触发进入其他路由
+        2. 调用要离开路由的组件守卫 beforeRouteLeave
+        3. 调用全局前置守卫 router.beforeEach
+        4. 在重用的组件里调用 beforeRouteUpdate
+        5. 调用路由独享守卫 beforeEnter
+        6. 解析异步路由组件
+        7. 在将要进入的路由组件中调用 beforeRouteEnter
+        8. 调用全局解析守卫 router.beforeResolve
+        9. 导航被确认
+        10. 调用全局后置钩子 router.afterEach
+        11. 触发 dom 更新（mounted）
+        12. 执行 beforeRouteEnter 中传给 next 的回调函数
+    * 完整的路由钩子和生命周期顺序
+        1. 调用要离开路由的组件守卫 beforeRouteLeave
+        2. 调用全局前置守卫 router.beforeEach
+        3. 调用路由独享守卫 beforeEnter
+        4. 在将要进入的路由组件中调用 beforeRouteEnter
+        5. 调用全局解析守卫 router.beforeResolve
+        6. 调用全局后置钩子 router.afterEach
+        7. beforeCreate 不能访问 this
+        8. created 可以访问 this，不能访问 dom
+        9. beforeMount
+        10. deativated 离开缓存组件 a，或者触发 a 的 beforeDestroy 和 destroyed
+        11. mounted
+        12. activated 进入缓存组件 b
+        13. 执行 beforeRouteEnter 中传给 next 的回调函数
 </details>
 <br><br>
