@@ -468,3 +468,14 @@ TCP 连接有的时候会被浏览器和服务端维持一段时间。TCP 不需
 [链接](https://datatracker.ietf.org/doc/html/rfc2616#section-8.1)
 </details>
 <br><br>
+
+9. 什么是 对头阻塞（Head-of-Line blocking）？
+
+<details>
+<summary>答案</summary>
+
+1. http 1.1 的队头阻塞
+
+
+</details>
+<br><br>
