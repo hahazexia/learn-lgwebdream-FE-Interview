@@ -751,5 +751,7 @@ start ─────►       │p1.then5     │ │p1.then4      │         
 - [MDN then 的返回值](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#%E8%BF%94%E5%9B%9E%E5%80%BC)
 - [Promise.resolve()与new Promise(r => r(v))](https://blog.csdn.net/my_new_way/article/details/104838192)
 - [探讨：当Async/Await的遇到了EventLoop](https://zhuanlan.zhihu.com/p/86993504)
+- [Promise 你可能真的还没用明白（续集进阶版）](https://blog.csdn.net/yck199/article/details/108505645)
+- [ecma 11 文档](https://262.ecma-international.org/11.0/#sec-newpromiseresolvethenablejob)
 </details>
 <br><br>
