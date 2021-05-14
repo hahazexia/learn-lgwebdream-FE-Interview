@@ -744,5 +744,12 @@ start ─────►       │p1.then5     │ │p1.then4      │         
 
                                 ──────────────────────►
 ```
+
+
+参考链接：
+
+- [MDN then 的返回值](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#%E8%BF%94%E5%9B%9E%E5%80%BC)
+- [Promise.resolve()与new Promise(r => r(v))](https://blog.csdn.net/my_new_way/article/details/104838192)
+- [探讨：当Async/Await的遇到了EventLoop](https://zhuanlan.zhihu.com/p/86993504)
 </details>
 <br><br>
