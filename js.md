@@ -755,3 +755,58 @@ start ─────►       │p1.then5     │ │p1.then4      │         
 - [ecma 11 文档](https://262.ecma-international.org/11.0/#sec-newpromiseresolvethenablejob)
 </details>
 <br><br>
+
+7. 写一个方法判断字符串中的括号是否闭合合法？
+
+<details>
+<summary>答案</summary>
+
+```js
+function isClosed(str) {
+  if (!str) return true;
+  const array = str.split('');
+
+  const stack = [];
+  const targetsArr = [
+    { key: '[',value: 1},
+    { key: ']',value: -1 },
+    { key: '(',value: 2 },
+    { key: ')',value: -2 },
+    { key: '{',value: 3 },
+    { key: '}',value: -3 },
+  ];
+  const targetsMap = new Map();
+
+  for (let i of targetsArr) {
+    targetsMap.set(i.key, i.value);
+  }
+
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === '(' || array[i] === '[' || array[i] === '{') {
+      stack.push(targetsMap.get(array[i]));
+    } else {
+      if (targetsMap.has(array[i])) {
+        const value = targetsMap.get(array[i]);
+        const l = stack.length;
+        if (l > 0 && ((stack[l - 1] + value) === 0)) {
+          stack.pop();
+        } else {
+          stack.push(value);
+        }
+      }
+    }
+  }
+
+  return stack.length ? false : true;
+}
+
+isClosed('{}'); // true
+isClosed('()[]{}'); // true
+isClosed('{()[][{()}][]}'); // true
+isClosed('{)'); // false
+isClosed('{(])}'); // false
+isClosed('{(}[)]'); // false
+isClosed('('); // false
+```
+</details>
+<br><br>
