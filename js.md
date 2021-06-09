@@ -767,31 +767,26 @@ function isClosed(str) {
   const array = str.split('');
 
   const stack = [];
-  const targetsArr = [
-    { key: '[',value: 1},
-    { key: ']',value: -1 },
-    { key: '(',value: 2 },
-    { key: ')',value: -2 },
-    { key: '{',value: 3 },
-    { key: '}',value: -3 },
-  ];
-  const targetsMap = new Map();
 
-  for (let i of targetsArr) {
-    targetsMap.set(i.key, i.value);
+  const targetsMap = {
+    '[': 1,
+    ']': -1,
+    '(': 2,
+    ')': -2,
+    '{': 3,
+    '}': -3
   }
 
   for (let i = 0; i < array.length; i++) {
     if (array[i] === '(' || array[i] === '[' || array[i] === '{') {
-      stack.push(targetsMap.get(array[i]));
+      stack.push(targetsMap[array[i]]);
     } else {
-      if (targetsMap.has(array[i])) {
-        const value = targetsMap.get(array[i]);
-        const l = stack.length;
-        if (l > 0 && ((stack[l - 1] + value) === 0)) {
+      const l = stack.length;
+      if (targetsMap[array[i]]) {
+        if (l > 0 && ((stack[l - 1] + targetsMap[array[i]]) === 0)) {
           stack.pop();
         } else {
-          stack.push(value);
+          stack.push(targetsMap[array[i]]);
         }
       }
     }
