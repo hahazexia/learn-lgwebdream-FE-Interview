@@ -342,3 +342,190 @@ console.log(a === 1 && a === 2 && a === 3);
 </details>
 <br><br>
 
+14. 排序算法说一说
+
+<details>
+<summary>答案</summary>
+
+```js
+function bubble (arr) {
+    if (arr.length <= 1) return arr;
+    
+    for (let i = 0; i < arr.length - 1; i++) {
+        for (let j = 0; j < arr.length - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+    }
+    return arr;
+}
+
+// 优化
+function bubbleOptimise (arr) {
+    if (arr.length <= 1) return arr;
+    
+    for (let i = 0; i < arr.length - 1; i++) {
+        let hasChange = false;
+        for (let j = 0; j < arr.length - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            }
+        }
+        if (!hasChange) break;
+    }
+    return arr;
+}
+
+function insert (arr) {
+    if (arr.length <= 1) return arr;
+
+    let preIndex;
+    let current;
+
+    for (let i = 1; i < arr.length; i++) {
+        current = arr[i];
+        preIndex = i - 1;
+
+        while (i >= 0 && arr[preIndex] > current) {
+            arr[preIndex + 1] = arr[preIndex];
+            preIndex--;
+        }
+
+        if (preIndex + 1 !== i) {
+            arr[preIndex + 1] = current;
+        }
+    }
+    return arr
+}
+
+function insertOptimise (arr) {
+    if (arr.length <= 1) return arr;
+    let current, low, high, middle
+
+    for (let i = 1; i < arr.length; i++) {
+        low = 0;
+        high = i - 1;
+        current = arr[i];
+
+        while (low <= high) {
+            middle = Math.floor((high + low) / 2);
+            if (current >= arr[middle]) {
+                low = middle + 1;
+            } else {
+                high = middle - 1;
+            }
+        }
+
+        for (let j = i; j > low; j--) {
+            arr[j] = arr[j - 1];
+        }
+        arr[low] = current;
+    }
+    return arr;
+}
+
+
+ function quickSort (arr) {
+　　if (arr.length <= 1) { return arr; }
+    let pivotIndex = Math.floor(arr.length / 2);
+
+　　let pivot = arr.splice(pivotIndex, 1)[0];
+　　let left = [];
+　　let right = [];
+
+　　for (var i = 0; i < arr.length; i++){ 
+　　　　if (arr[i] < pivot) {
+　　　　　　left.push(arr[i]);
+　　　　} else {
+　　　　　　right.push(arr[i]);
+　　　　}
+　　}
+　　return quickSort(left).concat([pivot], quickSort(right));
+};
+
+
+```
+</details>
+<br><br>
+
+15. 去重
+
+<details>
+<summary>答案</summary>
+
+```js
+function duplicateRemoval (arr) {
+    return [...new Set(arr)];
+}
+
+function duplicateRemoval (arr) {
+    return Object.keys(arr.reduce((acc, i) => (acc[i] = i, acc), {}))
+}
+
+function duplicateRemoval (arr) {
+    return arr.reduce((acc, i) => (!acc.includes(i) ? acc.push(i) : '', acc) , [])
+}
+
+```
+</details>
+<br><br>
+
+16. 垂直居中
+
+<details>
+<summary>答案</summary>
+
+实现子容器水平、垂直居中对齐的方式有（父容器，子容器宽高不确定。）：
+
+  1. 父容器.parent{text-align: center; display: table-cell; vertiacal-align: middle;}。 子容器.child{display: inline-block;}
+
+  2. 利用定位。父容器.parent{position: relative;} 子容器.child{position: absolute; top: 50%, left: 50%; transform: translate(-50%, -50%); }
+
+  3. 利用弹性布局。父容器display: flex; justify-content: center; align-items: center;
+</details>
+<br><br>
+
+17. css 伪类 伪元素
+
+<details>
+<summary>答案</summary>
+
+* 伪类
+    1. :first-child 一组兄弟元素中第一个元素
+    2. :first-of-type 一组兄弟元素中指定类型的第一个元素
+    3. :last-child 一组兄弟元素中最后一个元素
+    4. :last-of-type 一组兄弟元素中指定类型的最后一个元素
+    5. :not 匹配不符合参数选择器的元素
+    6. :nth-child(an+b) 先找到当前元素的兄弟元素，然后按照位置的先后顺序从 1 开始排序
+    7. :fullscreen 应用于当前处于全屏显示模式的元素
+* 尾元素
+    1. ::after(:after) 使用 ::after 会创建一个伪元素，该伪元素会成为选中元素的最后一个子元素
+    2. ::before(:before)使用 ::before 会创建一个伪元素，该伪元素会成为选中元素的第一个子元素
+    3. ::selection 用于文档中被用户高亮的部分
+</details>
+<br><br>
+
+
+
+
+
+```js
+/**
+5.如何做兼容（js，babel、 ployfill， css， postcss， 根据具体的浏览器）
+7.webpack 你做过那些配置
+8. this.$nextTick
+9.key 与 refs 干啥用的
+10. vue-router 有几种模式，区别是啥
+11. cookie ，sessionStorage 以及 localStorage 区别，是啥
+12. cookie ，sessionStorage ，localStorage 以及vuex 在浏览器刷新的时候那些有哪些没有，能干啥
+ 16.vue 数据传值
+ 17.讲讲vuex
+ 18.讲讲react
+ 19. v-if 与 v-for 在同一个元素里谁的优先级高
+ 20. 如何使用addRoute 进行路由动态注册
+
+*/
+```
+
+
